@@ -1,0 +1,39 @@
+{
+  "name": "accessibility-guardian",
+  "displayName": "Accessibility Guardian",
+  "description": "Catch ADA/HIPAA accessibility violations before they cost you.",
+  "version": "0.0.1",
+  "publisher": "your-name",
+  "private": true,
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Linters"
+  ],
+  "activationEvents": [
+    "onLanguage:html"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "accessibilityGuardian.scanActiveFile",
+        "title": "Accessibility: Scan Active File"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "tsc -p ./",
+    "watch": "tsc -w -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.104.0",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^3.6.2",
+    "typescript": "^5.4.0"
+  }
+}
+

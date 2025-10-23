@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Accessibility Guardian Settings",
+  "type": "object",
+  "properties": {
+    "accessibilityGuardian.minContrast": {
+      "type": "number",
+      "default": 4.5,
+      "minimum": 1,
+      "maximum": 21,
+      "description": "Minimum contrast ratio (WCAG AA default 4.5)."
+    }
+  }
+}
