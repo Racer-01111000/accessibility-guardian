@@ -1,0 +1,9 @@
+Patient Name: Robert White
+Patient ID: 445566
+DOB: 1984-02-14
+Email: robert.white@hospitalmail.com
+Phone: (555) 123-9876
+Address: 1200 Elm Street, Denver, CO 80202
+SSN: 123-45-6789
+MRN: MRN-778899
+Test Result: Positive for Influenza A

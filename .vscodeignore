@@ -1,0 +1,15 @@
+# Exclude dev & tests from the VSIX
+src/**
+tmp/**
+test-samples/**
+.vscode/**
+.git/**
+.github/**
+
+# Build artifacts & configs you don’t need to ship
+**/*.map
+tsconfig.json
+test.html
+run_demo.sh
+reset.sh
+ROADMAP_PHASE2.md

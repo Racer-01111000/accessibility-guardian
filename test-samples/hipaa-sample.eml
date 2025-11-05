@@ -1,0 +1,17 @@
+ xFrom: "Clinic Lab" <lab@clinic.example>
+To: Robert White <robert.white@hospitalmail.com>
+Subject: Lab Results for Robert White (MRN-778899)
+Date: Sat, 02 Nov 2025 10:30:00 +0700
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+Hello Robert White (DOB 1984-02-14),
+
+Your test result: Positive for Influenza A.
+Patient ID: 445566
+MRN: MRN-778899
+SSN on file: 123-45-6789
+Phone: (555) 123-9876
+Address: 1200 Elm Street, Denver, CO 80202
+
+— Clinic Lab
