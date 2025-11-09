@@ -1,15 +1,9 @@
-# Exclude dev & tests from the VSIX
-src/**
-tmp/**
-test-samples/**
-.vscode/**
-.git/**
-.github/**
+cat > .vscodeignore <<'EOF'
+# Ship only the bundled code in /dist and a few metadata files
+*
+!dist/**
+!package.json
+!readme.md
+!LICENSE
+EOF
 
-# Build artifacts & configs you don’t need to ship
-**/*.map
-tsconfig.json
-test.html
-run_demo.sh
-reset.sh
-ROADMAP_PHASE2.md

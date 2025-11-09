@@ -1,21 +1,27 @@
-# Accessibility Guardian (VS Code Extension)
+cd ~/accessibility-guardian
+cat > README.md <<'EOF'
+## Accessibility Guardian (VS Code Extension)
 
-Catch the “Big 5” accessibility risks before they ship.
+**HIPAA • GDPR • ADA Compliance Scanner for VS Code**  
+Catch the “Big 5” accessibility and privacy risks **before they ship**.  
 
-## Dev
+---
+
+### ✨ Features
+
+- **HIPAA Analyzer** — detects exposure of PHI (Protected Health Information) in DOCX, PDF, EML, and HTML files.  
+- **GDPR Module (EU)** — scans data-handling text for cross-border compliance and consent requirements.  
+- **PIPEDA (Canada) & APP (Australia)** — evaluates storage, processor, and consent alignment per region.  
+- **ADA / WCAG Accessibility Checks** — flags missing alt tags, low contrast, and semantic violations in HTML.  
+- **Unified Dashboard** — view risk summaries and recommendations directly in the VS Code Problems panel.  
+- **Lightweight Build** — under 1 MB packaged, bundled with `esbuild` for performance and portability.  
+
+---
+
+### Dev
+
 ```bash
 npm install
 npm run build
 # F5 in VS Code -> Extension Development Host
 
-
----
-
-### Breakdown:
-- The top part (`# Accessibility Guardian...`) is your **title + tagline**.  
-- Then `## Development` introduces the developer instructions.  
-- The triple backticks (```bash … ```) define a **code block** so commands display nicely.  
-
----
-
-👉 If you want, I can extend this `README.md` with sections for **Features**, **Roadmap**, and **Packaging** (how to run `vsce package` and publish to the Marketplace). Would you like me to flesh it out into a more complete starter README?
