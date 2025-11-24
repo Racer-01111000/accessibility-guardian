@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 import { parseColor, contrastRatio } from '../utils/colors';
 
@@ -12,7 +15,7 @@ export const colorContrastRule = {
     const text = document.getText();
 
     // Find any tag with an inline style attribute
-    const withStyle = /<([a-z0-9-]+)\b[^>]*\sstyle=(["'])(.*?)\2[^>]*>/gis;
+    const withStyle = /<([a-z0-9-]+)[^>]*\sstyle=(["'])(.*?)\2[^>]*>/gis;
     let m: RegExpExecArray | null;
 
     while ((m = withStyle.exec(text)) !== null) {

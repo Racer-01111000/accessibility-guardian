@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 
 /**
@@ -16,12 +19,12 @@ export const focusIndicatorRule = {
     const text = document.getText();
 
     // 1) Inline style cases like: <button style="outline:none">...</button>
-    const withStyle = /<([a-z0-9-]+)\b[^>]*\sstyle=(["'])(.*?)\2[^>]*>/gis;
+    const withStyle = /<([a-z0-9-]+)[^>]*\sstyle=(["'])(.*?)\2[^>]*>/gis;
     let m: RegExpExecArray | null;
 
     while ((m = withStyle.exec(text)) !== null) {
       const style = m[3];
-      if (/\boutline\s*:\s*(none|0)\b/i.test(style)) {
+      if (/outline\s*:\s*(none|0)/i.test(style)) {
         diags.push({
           range: new vscode.Range(
             document.positionAt(m.index),
@@ -58,16 +61,16 @@ export const focusIndicatorRule = {
         const decls = parts.slice(1).join('{'); // in case { appears in content
 
         // Check selectors that affect focus states
-        if (!/:(focus|focus-visible)\b/i.test(selector)) continue;
+        if (!/:(focus|focus-visible)/i.test(selector)) continue;
 
-        const removesOutline = /\boutline\s*:\s*(none|0)\b/i.test(decls);
+        const removesOutline = /outline\s*:\s*(none|0)/i.test(decls);
         if (!removesOutline) continue;
 
         // Does the block add a visible replacement?
-        const addsShadow = /\bbox-shadow\s*:\s*[^;]+/i.test(decls);
+        const addsShadow = /box-shadow\s*:\s*[^;]+/i.test(decls);
         const addsBorder =
-          /\bborder\s*:\s*(?!\s*none\b|0\b)[^;]+/i.test(decls) ||
-          /\bborder-(top|right|bottom|left)\s*:\s*(?!\s*none\b|0\b)[^;]+/i.test(decls);
+          /border\s*:\s*(?!\s*none|0)[^;]+/i.test(decls) ||
+          /border-(top|right|bottom|left)\s*:\s*(?!\s*none|0)[^;]+/i.test(decls);
 
         if (!(addsShadow || addsBorder)) {
           diags.push({
@@ -88,4 +91,3 @@ export const focusIndicatorRule = {
     return diags;
   }
 };
-

@@ -1,9 +1,0 @@
-cat > .vscodeignore <<'EOF'
-# Ship only the bundled code in /dist and a few metadata files
-*
-!dist/**
-!package.json
-!readme.md
-!LICENSE
-EOF
-

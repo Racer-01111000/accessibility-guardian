@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 import { PHI_PATTERNS, sliceWithContext } from './utils/document-helpers';
 
@@ -52,4 +55,3 @@ export async function scanHtmlHipaaCommand() {
     vscode.window.showErrorMessage(`HTML scan failed: ${err?.message || err}`);
   }
 }
-

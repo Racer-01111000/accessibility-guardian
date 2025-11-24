@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 // src/analyzers/utils/jurisdiction.ts
 export type Severity = 'info' | 'warn' | 'error';
 
@@ -27,3 +30,8 @@ export function crossBorderWarning(cfg: PrivacyConfig, text: string): string[] {
   return warnings;
 }
 
+// ---- Stub: cross-border transfer checks for PIPEDA/APP (placeholder logic) ----
+export function checkCrossBorder(_region: string, _text: string): string[] {
+  // Minimal placeholder: no cross-border warnings yet.
+  return [];
+}

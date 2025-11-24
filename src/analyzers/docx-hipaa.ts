@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 import * as fs from 'fs/promises';
 import * as path from 'path';

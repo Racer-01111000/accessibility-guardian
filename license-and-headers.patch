@@ -1,0 +1,104 @@
+diff --git a/esbuild.config.js b/esbuild.config.js
+index ddddddd..eeeeeee 100644
+--- a/esbuild.config.js
++++ b/esbuild.config.js
+@@ -1,11 +1,16 @@
+ const esbuild = require('esbuild');
+ 
+ esbuild.build({
+   entryPoints: ['src/extension.ts'],
+   bundle: true,
+   outfile: 'dist/extension.js',
+   platform: 'node',
+   external: ['vscode'],
+-  sourcemap: true
++  sourcemap: true,
++  banner: {
++    js: "/*! Accessibility Guardian — Evaluation License (30 Days) | LicenseRef-EVALUATION | Evaluation use only — contact firebrandipsec@gmail.com */"
++  }
+ }).catch(() => process.exit(1));
+diff --git a/tools/add-license-header.js b/tools/add-license-header.js
+new file mode 100644
+index 0000000..ffffffff
+--- /dev/null
++++ b/tools/add-license-header.js
+@@ -0,0 +1,112 @@
++// tools/add-license-header.js
++//
++// Inserts a standard evaluation license header at the top of all .ts files
++// under ./src, if it is not already present. This script is idempotent.
++//
++// Usage:
++//   node tools/add-license-header.js
++// or via npm:
++//   npm run add:headers
++
++const fs = require('fs');
++const path = require('path');
++
++const ROOT = process.cwd();
++const SRC_DIR = path.join(ROOT, 'src');
++
++const HEADER = [
++  '/*',
++  ' * Accessibility Guardian — Evaluation License (30 Days)',
++  ' * Copyright (c) 2025 Richard Robert Wright.',
++  ' * LicenseRef-EVALUATION',
++  ' *',
++  ' * This software is licensed for evaluation use only.',
++  ' * For commercial licensing, contact firebrandipsec@gmail.com',
++  ' */',
++  ''
++].join('\n');
++
++function isTsFile(filePath) {
++  return filePath.endsWith('.ts');
++}
++
++function alreadyHasHeader(content) {
++  return content.includes('LicenseRef-EVALUATION');
++}
++
++function addHeaderToFile(filePath) {
++  const original = fs.readFileSync(filePath, 'utf8');
++
++  if (alreadyHasHeader(original)) {
++    console.log(`SKIP (already tagged): ${path.relative(ROOT, filePath)}`);
++    return;
++  }
++
++  const updated = HEADER + original;
++  fs.writeFileSync(filePath, updated, 'utf8');
++  console.log(`ADD HEADER: ${path.relative(ROOT, filePath)}`);
++}
++
++function walk(dir) {
++  const entries = fs.readdirSync(dir, { withFileTypes: true });
++
++  for (const entry of entries) {
++    const fullPath = path.join(dir, entry.name);
++
++    if (entry.isDirectory()) {
++      // Skip typical non-source dirs just in case
++      if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name.startsWith('.')) {
++        continue;
++      }
++      walk(fullPath);
++    } else if (entry.isFile()) {
++      if (isTsFile(fullPath)) {
++        addHeaderToFile(fullPath);
++      }
++    }
++  }
++}
++
++if (!fs.existsSync(SRC_DIR)) {
++  console.error('src/ directory not found. Run this from the project root.');
++  process.exit(1);
++}
++
++console.log('Adding evaluation license headers to TypeScript files under src/ ...');
++walk(SRC_DIR);
++console.log('Done.');
++
+===== PATCH END =====

@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 
 const HELP: Record<string, string> = {
@@ -22,10 +25,11 @@ export function registerHoverProvider() {
       for (const d of diags) {
         const code = String(d.code ?? '');
         const tip = HELP[code] ?? d.message;
-        md.appendMarkdown(`**${code}** – ${tip}\n\n`);
+        md.appendMarkdown(`**${code}** – ${tip}
+
+`);
       }
       return new vscode.Hover(md);
     }
   });
 }
-

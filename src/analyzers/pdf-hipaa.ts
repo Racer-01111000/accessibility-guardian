@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 // pdf-parse has no official TS types in many envs; 'any' keeps it simple.
 const pdfParse: any = require('pdf-parse');

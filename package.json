@@ -2,7 +2,7 @@
   "name": "accessibility-guardian",
   "displayName": "Accessibility Guardian",
   "description": "Catch ADA/HIPAA accessibility violations before they cost you.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/Racer-01111000/accessibility-guardian.git"
@@ -13,11 +13,16 @@
   "homepage": "https://github.com/Racer-01111000/accessibility-guardian#readme",
   "publisher": "racer01111000",
   "private": true,
-  "engines": { "vscode": "^1.104.0" },
-  "categories": ["Linters"],
-
+  "license": "LicenseRef-EVALUATION",
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "Linters"
+  ],
   "activationEvents": [
     "onLanguage:html",
+    "onCommand:accessibilityGuardian.scanActiveFile",
     "onCommand:accessibilityGuardian.scanDocxHipaa",
     "onCommand:accessibilityGuardian.scanPdfHipaa",
     "onCommand:accessibilityGuardian.scanEmailHipaa",
@@ -26,50 +31,121 @@
     "onCommand:accessibilityGuardian.scanPipedaCa",
     "onCommand:accessibilityGuardian.scanAppAu"
   ],
-
   "main": "./dist/extension.js",
-
+  "files": [
+    "dist/",
+    "package.json",
+    "README.md",
+    "LICENSE.txt"
+  ],
   "contributes": {
     "commands": [
-      { "command": "accessibilityGuardian.scanActiveFile", "title": "Accessibility: Scan Active File" },
-      { "command": "accessibilityGuardian.scanDocxHipaa", "title": "Accessibility: Scan DOCX for HIPAA risks" },
-      { "command": "accessibilityGuardian.scanPdfHipaa", "title": "Accessibility: Scan PDF for HIPAA risks" },
-      { "command": "accessibilityGuardian.scanEmailHipaa", "title": "Accessibility: Scan Email (.eml) for HIPAA risks" },
-      { "command": "accessibilityGuardian.scanHtmlHipaa", "title": "Accessibility: Scan HTML for HIPAA risks" },
-      { "command": "accessibilityGuardian.scanGdprEu", "title": "Privacy: Scan (GDPR/EU)" },
-      { "command": "accessibilityGuardian.scanPipedaCa", "title": "Privacy: Scan (PIPEDA/Canada)" },
-      { "command": "accessibilityGuardian.scanAppAu", "title": "Privacy: Scan (APP/Australia)" }
+      {
+        "command": "accessibilityGuardian.scanActiveFile",
+        "title": "Accessibility: Scan Active File"
+      },
+      {
+        "command": "accessibilityGuardian.scanDocxHipaa",
+        "title": "Accessibility: Scan DOCX for HIPAA risks"
+      },
+      {
+        "command": "accessibilityGuardian.scanPdfHipaa",
+        "title": "Accessibility: Scan PDF for HIPAA risks"
+      },
+      {
+        "command": "accessibilityGuardian.scanEmailHipaa",
+        "title": "Accessibility: Scan Email (.eml) for HIPAA risks"
+      },
+      {
+        "command": "accessibilityGuardian.scanHtmlHipaa",
+        "title": "Accessibility: Scan HTML for HIPAA risks"
+      },
+      {
+        "command": "accessibilityGuardian.scanGdprEu",
+        "title": "Privacy: Scan (GDPR/EU)"
+      },
+      {
+        "command": "accessibilityGuardian.scanPipedaCa",
+        "title": "Privacy: Scan (PIPEDA/Canada)"
+      },
+      {
+        "command": "accessibilityGuardian.scanAppAu",
+        "title": "Privacy: Scan (APP/Australia)"
+      }
     ],
     "menus": {
       "commandPalette": [
-        { "command": "accessibilityGuardian.scanActiveFile", "when": "editorTextFocus", "group": "navigation" },
-        { "command": "accessibilityGuardian.scanDocxHipaa", "when": "editorTextFocus", "group": "navigation" },
-        { "command": "accessibilityGuardian.scanPdfHipaa", "when": "editorTextFocus", "group": "navigation" },
-        { "command": "accessibilityGuardian.scanEmailHipaa", "when": "editorTextFocus", "group": "navigation" },
-        { "command": "accessibilityGuardian.scanHtmlHipaa", "when": "editorTextFocus", "group": "navigation" },
-        { "command": "accessibilityGuardian.scanGdprEu", "when": "editorTextFocus", "group": "navigation" },
-        { "command": "accessibilityGuardian.scanPipedaCa", "when": "editorTextFocus", "group": "navigation" },
-        { "command": "accessibilityGuardian.scanAppAu", "when": "editorTextFocus", "group": "navigation" }
-      ]
+  {
+    "command": "accessibilityGuardian.scanActiveFile",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  },
+  {
+    "command": "accessibilityGuardian.scanDocxHipaa",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  },
+  {
+    "command": "accessibilityGuardian.scanPdfHipaa",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  },
+  {
+    "command": "accessibilityGuardian.scanEmailHipaa",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  },
+  {
+    "command": "accessibilityGuardian.scanHtmlHipaa",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  },
+  {
+    "command": "accessibilityGuardian.scanGdprEu",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  },
+  {
+    "command": "accessibilityGuardian.scanPipedaCa",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  },
+  {
+    "command": "accessibilityGuardian.scanAppAu",
+    "when": "editorTextFocus",
+    "group": "navigation"
+  }
+]
     },
     "configuration": {
       "title": "Accessibility Guardian — Privacy",
       "properties": {
         "privacy.regionProfile": {
           "type": "string",
-          "enum": ["EU", "CA", "AU", "US"],
+          "enum": [
+            "EU",
+            "CA",
+            "AU",
+            "US"
+          ],
           "default": "EU",
           "description": "Primary privacy regime for scans."
         },
         "privacy.allowedRegions": {
           "type": "array",
-          "items": { "type": "string" },
-          "default": ["EU"],
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "EU"
+          ],
           "description": "Zones considered adequate for data transfer."
         },
         "privacy.dataProcessors": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "description": "Processor domains (e.g., s3.amazonaws.com, blob.core.windows.net)."
         },
@@ -80,14 +156,17 @@
         },
         "privacy.severityThreshold": {
           "type": "string",
-          "enum": ["info", "warn", "error"],
+          "enum": [
+            "info",
+            "warn",
+            "error"
+          ],
           "default": "warn",
           "description": "Minimum severity to report."
         }
       }
     }
   },
-
   "scripts": {
     "vscode:prepublish": "npm run bundle",
     "build": "tsc -p ./",
@@ -95,7 +174,6 @@
     "watch": "tsc -w -p ./",
     "clean": "rm -rf dist out"
   },
-
   "devDependencies": {
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.104.0",
@@ -109,4 +187,3 @@
     "pdf-parse": "^2.4.5"
   }
 }
-

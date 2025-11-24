@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 import { simpleParser } from 'mailparser';
 import { PHI_PATTERNS, sliceWithContext } from './utils/document-helpers';
@@ -28,7 +31,8 @@ export async function scanEmailHipaaCommand() {
       const htmlText = parsed.html.replace(/<[^>]+>/g, ' ');
       parts.push(htmlText);
     }
-    const text = parts.join('\n');
+    
+      const text = parts.join('\n');
 
     type Finding = { type: string; value: string; context: string };
     const findings: Finding[] = [];
@@ -60,10 +64,9 @@ export async function scanEmailHipaaCommand() {
     if (findings.length === 0) {
       vscode.window.showInformationMessage('EML scan: No obvious HIPAA risks found.');
     } else {
-      vscode.window.showWarningMessage(`EML scan: ${findings.length} potential HIPAA risk(s) found. See output for details.`);
+      vscode.window.showWarningMessage(`EML scan: ${findings.length} potential HIPAA risk(s) found. S ee output for details.`);
     }
   } catch (err: any) {
     vscode.window.showErrorMessage(`EML scan failed: ${err?.message || String(err)}`);
   }
 }
-

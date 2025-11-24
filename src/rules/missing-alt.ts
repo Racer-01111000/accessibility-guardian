@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 
 export const missingAltRule = {
@@ -6,7 +9,7 @@ export const missingAltRule = {
     const diagnostics: vscode.Diagnostic[] = [];
     const text = document.getText();
 
-    const imgRegex = /<img(?![^>]*\balt\s*=)[^>]*>/gi;
+    const imgRegex = /<img(?![^>]*alt\s*=)[^>]*>/gi;
     let match: RegExpExecArray | null;
 
     while ((match = imgRegex.exec(text)) !== null) {

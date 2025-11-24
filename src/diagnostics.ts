@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 import { missingAltRule } from './rules/missing-alt';
 import { unlabeledInputRule } from './rules/unlabeled-input';
@@ -21,4 +24,3 @@ export function scanDocument(doc: vscode.TextDocument, coll: vscode.DiagnosticCo
   }
   coll.set(doc.uri, all);
 }
-

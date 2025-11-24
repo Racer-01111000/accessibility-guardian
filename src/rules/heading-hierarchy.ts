@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
 
 /**
@@ -15,7 +18,7 @@ export const headingHierarchyRule = {
     const text = document.getText();
 
     // Find opening heading tags in source order
-    const re = /<h([1-6])\b[^>]*>/gi;
+    const re = /<h([1-6])[^>]*>/gi;
     const heads: Array<{ lvl: number; start: number; end: number }> = [];
     let m: RegExpExecArray | null;
 

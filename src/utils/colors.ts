@@ -1,3 +1,6 @@
+// Accessibility Guardian — Proprietary Evaluation License (30 Days)
+// LicenseRef-EVALUATION
+// © 2025 Richard Robert Wright — All rights reserved.
 export type RGB = { r: number; g: number; b: number; a: number };
 
 export function parseColor(input: string): RGB | null {
