@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Accessibility Guardian – Demo Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Intentionally includes some ADA/HIPAA accessibility issues
+       so the extension has something to flag and report. -->
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background: #111827;
+      color: #e5e7eb;
+    }
+
+    h1, h2 {
+      color: #f97316;
+      margin-bottom: 0.25rem;
+    }
+
+    .panel {
+      background: #020617;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid #1f2937;
+    }
+
+    .panel.bad {
+      border-color: #dc2626;
+    }
+
+    .panel.good {
+      border-color: #16a34a;
+    }
+
+    label {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.9rem;
+    }
+
+    input, textarea, button {
+      margin-top: 0.25rem;
+      padding: 0.4rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    button {
+      cursor: pointer;
+      background: #f97316;
+      border-color: #f97316;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #fb923c;
+    }
+
+    small {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Accessibility Guardian Demo</h1>
+  <p>
+    This page is intentionally built with a mix of <strong>good</strong> and
+    <strong>bad</strong> patterns so the extension can detect ADA/HIPAA issues.
+  </p>
+
+  <!-- BAD: Missing alt text + possible PHI in filename -->
+  <div class="panel bad" id="patient-photo-panel">
+    <h2>Patient Photo (Bad Example)</h2>
+    <p>
+      The image below has no <code>alt</code> attribute and uses a filename
+      that may expose PHI.
+    </p>
+    <img src="john_doe_mri_scan.png">
+    <small>Expected: alt text + non-PHI-safe filename.</small>
+  </div>
+
+  <!-- BAD: Unlabeled inputs, no autocomplete blocking, PHI hint text -->
+  <div class="panel bad" id="hipaa-bad-form">
+    <h2>Intake Form (Bad Example)</h2>
+    <p>
+      This form contains typical HIPAA / accessibility problems:
+      unlabeled inputs, PHI in placeholders, no ARIA, no autocomplete hints.
+    </p>
+
+    <input type="text" id="fullName" placeholder="John Doe – full legal name">
+    <input type="text" id="dob" placeholder="Date of Birth (MM/DD/YYYY)">
+    <input type="text" id="diagnosis" placeholder="Diagnosis (e.g., Stage II COPD)">
+    <button id="submitBad">Submit</button>
+    <small>Expected: labels, ARIA, non-PHI placeholder text.</small>
+  </div>
+
+  <!-- GOOD: Accessible + HIPAA-safe patterns -->
+  <div class="panel good" id="hipaa-good-form">
+    <h2>Intake Form (Good Example)</h2>
+    <p>
+      This version is much closer to ADA / HIPAA expectations.
+    </p>
+
+    <form autocomplete="off" aria-describedby="good-form-desc">
+      <p id="good-form-desc">
+        This form avoids PHI in placeholders and uses labels and ARIA attributes.
+      </p>
+
+      <label for="patient-id">Patient ID (Internal)</label>
+      <input
+        id="patient-id"
+        name="patient-id"
+        type="text"
+        inputmode="numeric"
+        aria-required="true"
+        autocomplete="off"
+      >
+
+      <label for="visit-reason">Reason for Visit (High-Level)</label>
+      <textarea
+        id="visit-reason"
+        name="visit-reason"
+        rows="3"
+        aria-required="true"
+        placeholder="Example: follow-up consultation"
+      ></textarea>
+
+      <button type="submit" id="submitGood">Submit</button>
+    </form>
+  </div>
+
+  <!-- BAD: Low contrast link and vague link text -->
+  <div class="panel bad" id="contrast-panel">
+    <h2>Low Contrast &amp; Vague Link Text</h2>
+    <p style="color:#4b5563">
+      For more info about this, click
+      <a href="records.html" style="color:#6b7280">here</a>.
+    </p>
+    <small>Expected: descriptive link text + higher contrast.</small>
+  </div>
+
+  <script>
+    // No logic needed for the demo, but we keep a script tag so
+    // the extension can test script parsing without side effects.
+    console.log("Accessibility Guardian demo page loaded.");
+  </script>
+</body>
+</html>
+

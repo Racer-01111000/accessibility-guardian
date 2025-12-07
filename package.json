@@ -12,7 +12,6 @@
   },
   "homepage": "https://github.com/Racer-01111000/accessibility-guardian#readme",
   "publisher": "racer01111000",
-  "private": true,
   "license": "LicenseRef-EVALUATION",
   "engines": {
     "vscode": "^1.104.0"
@@ -20,17 +19,16 @@
   "categories": [
     "Linters"
   ],
-  "activationEvents": [
-    "onLanguage:html",
-    "onCommand:accessibilityGuardian.scanActiveFile",
-    "onCommand:accessibilityGuardian.scanDocxHipaa",
-    "onCommand:accessibilityGuardian.scanPdfHipaa",
-    "onCommand:accessibilityGuardian.scanEmailHipaa",
-    "onCommand:accessibilityGuardian.scanHtmlHipaa",
-    "onCommand:accessibilityGuardian.scanGdprEu",
-    "onCommand:accessibilityGuardian.scanPipedaCa",
-    "onCommand:accessibilityGuardian.scanAppAu"
-  ],
+"activationEvents": [
+  "onCommand:accessibilityGuardian.scanActiveFile",
+  "onCommand:accessibilityGuardian.scanDocxHipaa",
+  "onCommand:accessibilityGuardian.scanPdfHipaa",
+  "onCommand:accessibilityGuardian.scanEmailHipaa",
+  "onCommand:accessibilityGuardian.scanHtmlHipaa",
+  "onCommand:accessibilityGuardian.scanGdprEu",
+  "onCommand:accessibilityGuardian.scanPipedaCa",
+  "onCommand:accessibilityGuardian.scanAppAu"
+],
   "main": "./dist/extension.js",
   "files": [
     "dist/",
@@ -75,47 +73,46 @@
     ],
     "menus": {
       "commandPalette": [
-  {
-    "command": "accessibilityGuardian.scanActiveFile",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  },
-  {
-    "command": "accessibilityGuardian.scanDocxHipaa",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  },
-  {
-    "command": "accessibilityGuardian.scanPdfHipaa",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  },
-  {
-    "command": "accessibilityGuardian.scanEmailHipaa",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  },
-  {
-    "command": "accessibilityGuardian.scanHtmlHipaa",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  },
-  {
-    "command": "accessibilityGuardian.scanGdprEu",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  },
-  {
-    "command": "accessibilityGuardian.scanPipedaCa",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  },
-  {
-    "command": "accessibilityGuardian.scanAppAu",
-    "when": "editorTextFocus",
-    "group": "navigation"
-  }
-]
+        {
+          "command": "accessibilityGuardian.scanActiveFile",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "accessibilityGuardian.scanDocxHipaa",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "accessibilityGuardian.scanPdfHipaa",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "accessibilityGuardian.scanEmailHipaa",
+          "when": "editorTextFocus",
+          "group": "navigation" },
+        {
+          "command": "accessibilityGuardian.scanHtmlHipaa",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "accessibilityGuardian.scanGdprEu",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "accessibilityGuardian.scanPipedaCa",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "accessibilityGuardian.scanAppAu",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        }
+      ]
     },
     "configuration": {
       "title": "Accessibility Guardian — Privacy",

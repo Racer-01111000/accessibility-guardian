@@ -1,27 +1,90 @@
 // Accessibility Guardian — Proprietary Evaluation License (30 Days)
 // LicenseRef-EVALUATION
 // © 2025 Richard Robert Wright — All rights reserved.
-# Architecture Overview
 
-**Accessibility Guardian** is a VS Code extension with three-tier responsibility:
+/**
+* Lightweight CSS parser for inline style attributes.
+* Used by rules such as color-contrast, focus indicators, etc.
+*/
 
-1. **UI & Wiring** (`src/extension.ts`)
-  - Registers diagnostics collection, hover providers, and commands
-  - Entry point for the extension
+export interface CssMap {
+[key: string]: string;
+}
 
-2. **Diagnostics Rules** (`src/rules/*`)
-  - Self-contained accessibility checks (e.g., `missing-alt.ts`, `color-contrast.ts`)
-  - Each exports `{ id, check(document): vscode.Diagnostic[] }`
-  - Run on HTML documents via `src/diagnostics.ts`
+/**
+* Parse a CSS inline style string into a key/value object.
+*
+* Example:
+* "color: red; background-color: #fff"
+* → { color: "red", "background-color": "#fff" }
+*/
+export function parseInlineStyle(style: string | undefined | null): CssMap {
+const result: CssMap = {};
+if (!style) return result;
 
-3. **File-type Analyzers** (`src/analyzers/*`)
-  - Heavy-lifting for DOCX, PDF, EML, HTML, GDPR compliance
-  - Export command functions (e.g., `scanDocxHipaaCommand`)
-  - Registered as `accessibilityGuardian.scanDocxHipaa`, etc.
+// Split by semicolon, ignore empty pieces
+const parts = style.split(";").map(s => s.trim()).filter(Boolean);
 
-**Build Pipeline:**
-- Source: `src/extension.ts` → TypeScript compile → `dist/extension.js` (via esbuild)
-- `vscode` is external (host-provided)
-- Quick iteration: `npm run watch` + F5 reload
+for (const part of parts) {
+const idx = part.indexOf(":");
+if (idx === -1) continue;
 
-**Your `css-tools.ts`:** Utility module for inline style parsing—likely used by rules or analyzers to detect CSS properties in HTML attributes.
+const key = part.slice(0, idx).trim().toLowerCase();
+const value = part.slice(idx + 1).trim();
+
+if (key && value) result[key] = value;
+}
+
+return result;
+}
+
+/**
+* Extract a numeric pixel value from common CSS units.
+*
+* Supports:
+* - px ("12px") → 12
+* - unitless numbers ("0", "1.5") → number
+* - ignores others (%, em, rem, vh, etc.) → null
+*/
+export function getNumericPx(value: string | undefined | null): number | null {
+if (!value) return null;
+
+const trimmed = value.trim().toLowerCase();
+
+if (/^-?\d+(\.\d+)?px$/.test(trimmed)) {
+return parseFloat(trimmed.replace("px", ""));
+}
+
+if (/^-?\d+(\.\d+)?$/.test(trimmed)) {
+return parseFloat(trimmed);
+}
+
+return null;
+}
+
+/**
+* Convenience helper:
+* getProperty(styleString, "background-color")
+*/
+export function getStyleProperty(
+style: string | undefined | null,
+prop: string
+): string | undefined {
+const parsed = parseInlineStyle(style);
+return parsed[prop.toLowerCase()];
+}
+
+/**
+* Quickly check if an inline style contains *any* of a set of keys.
+* Used by focus indicator rules.
+*/
+export function containsAnyProperty(
+style: string | undefined | null,
+keys: string[]
+): boolean {
+if (!style) return false;
+
+const css = parseInlineStyle(style);
+
+return keys.some(k => k.toLowerCase() in css);
+}
