@@ -1,100 +1,80 @@
-// Accessibility Guardian — Proprietary Evaluation License (30 Days)
-// LicenseRef-EVALUATION
-// © 2025 Richard Robert Wright — All rights reserved.
-
 import * as vscode from 'vscode';
-import { scanDocument } from './diagnostics';
-import { registerHoverProvider } from './hover-provider';
+import { scanHtmlHipaa } from './scanners/scanHtmlHipaa'; // Import your scanner
+import { Finding } from './types';
 
-// HIPAA analyzers
-import { scanDocxHipaaCommand } from './analyzers/docx-hipaa';
-import { scanPdfHipaaCommand } from './analyzers/pdf-hipaa';
-import { scanHtmlHipaaCommand } from './analyzers/html-hipaa';
-import { scanEmailHipaaCommand } from './analyzers/email-hipaa';
-
-// Privacy analyzers
-import { scanGdprEuCommand } from './analyzers/gdpr-eu';
-import { scanPipedaCaCommand } from './analyzers/pipeda-ca';
-import { scanAppAuCommand } from './analyzers/app-au';
+let diagnosticCollection: vscode.DiagnosticCollection;
 
 export function activate(context: vscode.ExtensionContext) {
-  const diagnostics = vscode.languages.createDiagnosticCollection('accessibilityGuardian');
-  context.subscriptions.push(diagnostics);
+console.log('Accessibility Guardian: Active');
 
-  const scanActive = () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      return;
-    }
-    const doc = editor.document;
-    try {
-      scanDocument(doc, diagnostics);
-    } catch (err) {
-      console.error('[AG] scanActive failed:', err);
-    }
-  };
+// Initialize the collection
+diagnosticCollection = vscode.languages.createDiagnosticCollection('accessibility-guardian');
+context.subscriptions.push(diagnosticCollection);
 
-  const handleDocEvent = (doc: vscode.TextDocument) => {
-    // Live pipeline only for HTML / plaintext (HTML emails, templates, etc.)
-    if (doc.languageId !== 'html' && doc.languageId !== 'plaintext') {
-      return;
-    }
-    try {
-      scanDocument(doc, diagnostics);
-    } catch (err) {
-      console.error('[AG] diagnostics pipeline failed:', err);
-    }
-  };
+// --- LIVE LISTENER ---
+// Trigger on document change (typing)
+context.subscriptions.push(
+vscode.workspace.onDidChangeTextDocument(event => {
+if (vscode.window.activeTextEditor && event.document === vscode.window.activeTextEditor.document) {
+runScan(event.document);
+}
+})
+);
 
-  // Hook document lifecycle
-  context.subscriptions.push(
-    vscode.workspace.onDidOpenTextDocument(handleDocEvent),
-    vscode.workspace.onDidChangeTextDocument(e => handleDocEvent(e.document)),
-    vscode.workspace.onDidSaveTextDocument(handleDocEvent)
-  );
+// Trigger on file open
+if (vscode.window.activeTextEditor) {
+runScan(vscode.window.activeTextEditor.document);
+}
+}
 
-  // Initial scan on the current editor, if any
-  if (vscode.window.activeTextEditor) {
-    handleDocEvent(vscode.window.activeTextEditor.document);
-  }
+function runScan(document: vscode.TextDocument) {
+// 1. Clear old issues
+diagnosticCollection.delete(document.uri);
 
-  // Hover tooltips for issues
-  context.subscriptions.push(registerHoverProvider());
+// 2. Filter: Only scan relevant files (e.g., HTML)
+// You can expand this list later (jsx, tsx, php, etc.)
+if (document.languageId !== 'html') {
+return;
+}
 
-  // Explicit commands (these must match package.json exactly)
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanActiveFile',
-      scanActive
-    ),
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanDocxHipaa',
-      scanDocxHipaaCommand
-    ),
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanPdfHipaa',
-      scanPdfHipaaCommand
-    ),
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanEmailHipaa',
-      scanEmailHipaaCommand
-    ),
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanHtmlHipaa',
-      scanHtmlHipaaCommand
-    ),
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanGdprEu',
-      scanGdprEuCommand
-    ),
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanPipedaCa',
-      scanPipedaCaCommand),
-    vscode.commands.registerCommand(
-      'accessibilityGuardian.scanAppAu',
-      scanAppAuCommand
-    )
-  );
+const text = document.getText();
+const diagnostics: vscode.Diagnostic[] = [];
+
+// 3. Run the Engine
+const findings = scanHtmlHipaa(text);
+
+// 4. Map Findings to Diagnostics
+findings.forEach(finding => {
+// CONVERSION MAGIC: Linear Offset -> Line/Col Position
+const startPos = document.positionAt(finding.start);
+const endPos = document.positionAt(finding.end);
+
+const range = new vscode.Range(startPos, endPos);
+
+const diagnostic = new vscode.Diagnostic(
+range,
+finding.message,
+mapSeverity(finding.severity)
+);
+
+diagnostic.code = finding.code;
+diagnostic.source = 'Accessibility Guardian';
+
+diagnostics.push(diagnostic);
+});
+
+// 5. Update UI
+diagnosticCollection.set(document.uri, diagnostics);
+}
+
+// Helper to map string severity to VS Code enum
+function mapSeverity(severity: string): vscode.DiagnosticSeverity {
+switch (severity) {
+case 'error': return vscode.DiagnosticSeverity.Error;
+case 'warn': return vscode.DiagnosticSeverity.Warning;
+case 'info': return vscode.DiagnosticSeverity.Information;
+default: return vscode.DiagnosticSeverity.Information;
+}
 }
 
 export function deactivate() {}

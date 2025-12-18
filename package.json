@@ -2,168 +2,33 @@
   "name": "accessibility-guardian",
   "displayName": "Accessibility Guardian",
   "description": "Catch ADA/HIPAA accessibility violations before they cost you.",
-  "version": "0.2.1",
+  "version": "0.2.2",
+  "publisher": "racer01111000",
+  "license": "LicenseRef-EVALUATION",
   "repository": {
     "type": "git",
     "url": "https://github.com/Racer-01111000/accessibility-guardian.git"
   },
-  "bugs": {
-    "url": "https://github.com/Racer-01111000/accessibility-guardian/issues"
-  },
-  "homepage": "https://github.com/Racer-01111000/accessibility-guardian#readme",
-  "publisher": "racer01111000",
-  "license": "LicenseRef-EVALUATION",
   "engines": {
-    "vscode": "^1.104.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
-    "Linters"
+    "Linters",
+    "Other"
   ],
-"activationEvents": [
-  "onCommand:accessibilityGuardian.scanActiveFile",
-  "onCommand:accessibilityGuardian.scanDocxHipaa",
-  "onCommand:accessibilityGuardian.scanPdfHipaa",
-  "onCommand:accessibilityGuardian.scanEmailHipaa",
-  "onCommand:accessibilityGuardian.scanHtmlHipaa",
-  "onCommand:accessibilityGuardian.scanGdprEu",
-  "onCommand:accessibilityGuardian.scanPipedaCa",
-  "onCommand:accessibilityGuardian.scanAppAu"
-],
+  "activationEvents": [
+    "onLanguage:html",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onCommand:accessibilityGuardian.scanActiveFile"
+  ],
   "main": "./dist/extension.js",
   "files": [
-    "dist/",
+    "dist",
     "package.json",
     "README.md",
     "LICENSE.txt"
   ],
-  "contributes": {
-    "commands": [
-      {
-        "command": "accessibilityGuardian.scanActiveFile",
-        "title": "Accessibility: Scan Active File"
-      },
-      {
-        "command": "accessibilityGuardian.scanDocxHipaa",
-        "title": "Accessibility: Scan DOCX for HIPAA risks"
-      },
-      {
-        "command": "accessibilityGuardian.scanPdfHipaa",
-        "title": "Accessibility: Scan PDF for HIPAA risks"
-      },
-      {
-        "command": "accessibilityGuardian.scanEmailHipaa",
-        "title": "Accessibility: Scan Email (.eml) for HIPAA risks"
-      },
-      {
-        "command": "accessibilityGuardian.scanHtmlHipaa",
-        "title": "Accessibility: Scan HTML for HIPAA risks"
-      },
-      {
-        "command": "accessibilityGuardian.scanGdprEu",
-        "title": "Privacy: Scan (GDPR/EU)"
-      },
-      {
-        "command": "accessibilityGuardian.scanPipedaCa",
-        "title": "Privacy: Scan (PIPEDA/Canada)"
-      },
-      {
-        "command": "accessibilityGuardian.scanAppAu",
-        "title": "Privacy: Scan (APP/Australia)"
-      }
-    ],
-    "menus": {
-      "commandPalette": [
-        {
-          "command": "accessibilityGuardian.scanActiveFile",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "accessibilityGuardian.scanDocxHipaa",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "accessibilityGuardian.scanPdfHipaa",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "accessibilityGuardian.scanEmailHipaa",
-          "when": "editorTextFocus",
-          "group": "navigation" },
-        {
-          "command": "accessibilityGuardian.scanHtmlHipaa",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "accessibilityGuardian.scanGdprEu",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "accessibilityGuardian.scanPipedaCa",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "accessibilityGuardian.scanAppAu",
-          "when": "editorTextFocus",
-          "group": "navigation"
-        }
-      ]
-    },
-    "configuration": {
-      "title": "Accessibility Guardian — Privacy",
-      "properties": {
-        "privacy.regionProfile": {
-          "type": "string",
-          "enum": [
-            "EU",
-            "CA",
-            "AU",
-            "US"
-          ],
-          "default": "EU",
-          "description": "Primary privacy regime for scans."
-        },
-        "privacy.allowedRegions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [
-            "EU"
-          ],
-          "description": "Zones considered adequate for data transfer."
-        },
-        "privacy.dataProcessors": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [],
-          "description": "Processor domains (e.g., s3.amazonaws.com, blob.core.windows.net)."
-        },
-        "privacy.requireConsentBanner": {
-          "type": "boolean",
-          "default": true,
-          "description": "Require cookie/consent banner in HTML scans (GDPR)."
-        },
-        "privacy.severityThreshold": {
-          "type": "string",
-          "enum": [
-            "info",
-            "warn",
-            "error"
-          ],
-          "default": "warn",
-          "description": "Minimum severity to report."
-        }
-      }
-    }
-  },
   "scripts": {
     "vscode:prepublish": "npm run bundle",
     "build": "tsc -p ./",
@@ -171,16 +36,51 @@
     "watch": "tsc -w -p ./",
     "clean": "rm -rf dist out"
   },
+  "contributes": {
+    "commands": [
+      {
+        "command": "accessibilityGuardian.scanActiveFile",
+        "title": "Accessibility Guardian: Scan Active File"
+      },
+      {
+        "command": "accessibilityGuardian.scanHtmlHipaa",
+        "title": "Accessibility Guardian: Scan HTML for HIPAA"
+      },
+      {
+        "command": "accessibilityGuardian.scanGdprEu",
+        "title": "Accessibility Guardian: Scan for GDPR (EU)"
+      }
+    ],
+    "configuration": {
+      "title": "Accessibility Guardian",
+      "properties": {
+        "accessibilityGuardian.enableHipaa": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable scanning for Protected Health Information (PHI) and HIPAA risks."
+        },
+        "accessibilityGuardian.enableWcag": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable scanning for Accessibility (WCAG) violations."
+        },
+        "accessibilityGuardian.enableGdpr": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable scanning for GDPR/Privacy risks and third-party vendors."
+        }
+      }
+    }
+  },
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "@types/vscode": "^1.104.0",
-    "@vscode/test-electron": "^2.3.8",
-    "@vscode/vsce": "^3.6.2",
-    "esbuild": "^0.25.12",
-    "typescript": "^5.4.0"
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^2.15.0",
+    "esbuild": "^0.19.0",
+    "typescript": "^5.3.0"
   },
   "dependencies": {
-    "mailparser": "^3.7.5",
-    "pdf-parse": "^2.4.5"
+    "mailparser": "^3.6.0",
+    "pdf-parse": "^1.1.1"
   }
 }
