@@ -1,80 +1,98 @@
 import * as vscode from 'vscode';
-import { scanHtmlHipaa } from './scanners/scanHtmlHipaa'; // Import your scanner
+import { scanHtmlHipaa } from './scanners/scanHtmlHipaa';
+import { scanWcag } from './scanners/scanWcag';
+import { scanGdpr } from './scanners/scanGdpr';
 import { Finding } from './types';
+import { QuickFixProvider } from './providers/QuickFixProvider';
 
 let diagnosticCollection: vscode.DiagnosticCollection;
 
 export function activate(context: vscode.ExtensionContext) {
-console.log('Accessibility Guardian: Active');
+    console.log('Accessibility Guardian: Active');
 
-// Initialize the collection
-diagnosticCollection = vscode.languages.createDiagnosticCollection('accessibility-guardian');
-context.subscriptions.push(diagnosticCollection);
+    diagnosticCollection = vscode.languages.createDiagnosticCollection('accessibility-guardian');
+    context.subscriptions.push(diagnosticCollection);
 
-// --- LIVE LISTENER ---
-// Trigger on document change (typing)
-context.subscriptions.push(
-vscode.workspace.onDidChangeTextDocument(event => {
-if (vscode.window.activeTextEditor && event.document === vscode.window.activeTextEditor.document) {
-runScan(event.document);
-}
-})
-);
+    // --- REGISTER QUICK FIX ---
+    context.subscriptions.push(
+        vscode.languages.registerCodeActionsProvider(
+            { language: 'html', scheme: 'file' },
+            new QuickFixProvider(),
+            { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
+        )
+    );
 
-// Trigger on file open
-if (vscode.window.activeTextEditor) {
-runScan(vscode.window.activeTextEditor.document);
-}
+    // --- EVENTS ---
+    if (vscode.window.activeTextEditor) {
+        runScan(vscode.window.activeTextEditor.document);
+    }
+
+    context.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor(editor => {
+            if (editor) runScan(editor.document);
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeTextDocument(event => {
+            if (vscode.window.activeTextEditor && event.document === vscode.window.activeTextEditor.document) {
+                runScan(event.document);
+            }
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration(event => {
+            if (event.affectsConfiguration('accessibilityGuardian')) {
+                if (vscode.window.activeTextEditor) {
+                    runScan(vscode.window.activeTextEditor.document);
+                }
+            }
+        })
+    );
 }
 
 function runScan(document: vscode.TextDocument) {
-// 1. Clear old issues
-diagnosticCollection.delete(document.uri);
+    diagnosticCollection.delete(document.uri);
 
-// 2. Filter: Only scan relevant files (e.g., HTML)
-// You can expand this list later (jsx, tsx, php, etc.)
-if (document.languageId !== 'html') {
-return;
+    if (document.languageId !== 'html') return;
+
+    const config = vscode.workspace.getConfiguration('accessibilityGuardian');
+    const enableHipaa = config.get<boolean>('enableHipaa');
+    const enableWcag = config.get<boolean>('enableWcag');
+    const enableGdpr = config.get<boolean>('enableGdpr');
+
+    const text = document.getText();
+    const allFindings: Finding[] = [];
+
+    if (enableHipaa) allFindings.push(...scanHtmlHipaa(text));
+    if (enableWcag) allFindings.push(...scanWcag(text));
+    if (enableGdpr) allFindings.push(...scanGdpr(text));
+
+    const diagnostics = allFindings.map(finding => {
+        const startPos = document.positionAt(finding.start);
+        const endPos = document.positionAt(finding.end);
+        
+        const diagnostic = new vscode.Diagnostic(
+            new vscode.Range(startPos, endPos),
+            finding.message,
+            mapSeverity(finding.severity)
+        );
+        diagnostic.code = finding.code;
+        diagnostic.source = 'Accessibility Guardian';
+        return diagnostic;
+    });
+
+    diagnosticCollection.set(document.uri, diagnostics);
 }
 
-const text = document.getText();
-const diagnostics: vscode.Diagnostic[] = [];
-
-// 3. Run the Engine
-const findings = scanHtmlHipaa(text);
-
-// 4. Map Findings to Diagnostics
-findings.forEach(finding => {
-// CONVERSION MAGIC: Linear Offset -> Line/Col Position
-const startPos = document.positionAt(finding.start);
-const endPos = document.positionAt(finding.end);
-
-const range = new vscode.Range(startPos, endPos);
-
-const diagnostic = new vscode.Diagnostic(
-range,
-finding.message,
-mapSeverity(finding.severity)
-);
-
-diagnostic.code = finding.code;
-diagnostic.source = 'Accessibility Guardian';
-
-diagnostics.push(diagnostic);
-});
-
-// 5. Update UI
-diagnosticCollection.set(document.uri, diagnostics);
-}
-
-// Helper to map string severity to VS Code enum
 function mapSeverity(severity: string): vscode.DiagnosticSeverity {
-switch (severity) {
-case 'error': return vscode.DiagnosticSeverity.Error;
-case 'warn': return vscode.DiagnosticSeverity.Warning;
-case 'info': return vscode.DiagnosticSeverity.Information;
-default: return vscode.DiagnosticSeverity.Information;
-}
+    switch (severity) {
+        case 'error': return vscode.DiagnosticSeverity.Error;
+        case 'warn': return vscode.DiagnosticSeverity.Warning;
+        case 'info': return vscode.DiagnosticSeverity.Information;
+        default: return vscode.DiagnosticSeverity.Information;
+    }
 }
 
 export function deactivate() {}
