@@ -1,54 +1,35 @@
 {
   "name": "accessibility-guardian",
   "displayName": "Accessibility Guardian",
-  "description": "Catch ADA/HIPAA accessibility violations before they cost you.",
-  "version": "0.2.2",
-  "publisher": "racer01111000",
-  "license": "LicenseRef-EVALUATION",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Racer-01111000/accessibility-guardian.git"
-  },
+  "description": "Local-first compliance scanning (HIPAA, ADA, GDPR) for VS Code.",
+  "version": "0.2.4",
+  "publisher": "EchoCoreLabs",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Linters",
-    "Other"
-  ],
-  "activationEvents": [
-    "onLanguage:html",
-    "onLanguage:javascript",
-    "onLanguage:typescript",
-    "onCommand:accessibilityGuardian.scanActiveFile"
+    "Programming Languages"
   ],
   "main": "./dist/extension.js",
-  "files": [
-    "dist",
-    "package.json",
-    "README.md",
-    "LICENSE.txt"
+  "activationEvents": [
+    "onCommand:accessibilityGuardian.scanWorkspace",
+    "onCommand:accessibilityGuardian.scanActiveFile",
+    "onCommand:accessibilityGuardian.enterLicense"
   ],
-  "scripts": {
-    "vscode:prepublish": "npm run bundle",
-    "build": "tsc -p ./",
-    "bundle": "node esbuild.config.js",
-    "watch": "tsc -w -p ./",
-    "clean": "rm -rf dist out"
-  },
   "contributes": {
     "commands": [
+      {
+        "command": "accessibilityGuardian.scanWorkspace",
+        "title": "Accessibility Guardian: Deep Scan Workspace (PDF/DOCX)"
+      },
       {
         "command": "accessibilityGuardian.scanActiveFile",
         "title": "Accessibility Guardian: Scan Active File"
       },
       {
-        "command": "accessibilityGuardian.scanHtmlHipaa",
-        "title": "Accessibility Guardian: Scan HTML for HIPAA"
-      },
-      {
-        "command": "accessibilityGuardian.scanGdprEu",
-        "title": "Accessibility Guardian: Scan for GDPR (EU)"
+        "command": "accessibilityGuardian.enterLicense",
+        "title": "Accessibility Guardian: Enter License Key"
       }
     ],
     "configuration": {
@@ -58,29 +39,28 @@
           "type": "boolean",
           "default": true,
           "description": "Enable scanning for Protected Health Information (PHI) and HIPAA risks."
-        },
-        "accessibilityGuardian.enableWcag": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable scanning for Accessibility (WCAG) violations."
-        },
-        "accessibilityGuardian.enableGdpr": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable scanning for GDPR/Privacy risks and third-party vendors."
         }
       }
     }
   },
+  "scripts": {
+    "vscode:prepublish": "npm run bundle",
+    "bundle": "node esbuild.config.js",
+    "watch": "node esbuild.config.js --watch",
+    "test": "vscode-test"
+  },
   "devDependencies": {
-    "@types/node": "^20.11.0",
+    "@types/node": "^20.0.0",
     "@types/vscode": "^1.80.0",
-    "@vscode/vsce": "^2.15.0",
-    "esbuild": "^0.19.0",
-    "typescript": "^5.3.0"
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^3.7.1",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.0.0"
   },
   "dependencies": {
-    "mailparser": "^3.6.0",
-    "pdf-parse": "^1.1.1"
+    "axios": "^1.7.0",
+    "mammoth": "^1.11.0",
+    "pdf-parse": "^2.4.5"
   }
 }

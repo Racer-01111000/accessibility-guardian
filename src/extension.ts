@@ -1,98 +1,127 @@
 import * as vscode from 'vscode';
-import { scanHtmlHipaa } from './scanners/scanHtmlHipaa';
-import { scanWcag } from './scanners/scanWcag';
-import { scanGdpr } from './scanners/scanGdpr';
-import { Finding } from './types';
-import { QuickFixProvider } from './providers/QuickFixProvider';
-
-let diagnosticCollection: vscode.DiagnosticCollection;
+import { LicenseManager } from './license';
+import { RuleManager } from './ruleManager';
+import { Scanner } from './scanner';
+import { ContentExtractor } from './contentExtractor';
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Accessibility Guardian: Active');
+    console.log('🔄 Accessibility Guardian: STARTING ACTIVATION...'); // Debug Log
 
-    diagnosticCollection = vscode.languages.createDiagnosticCollection('accessibility-guardian');
+    // 1. Setup Managers
+    const licenseManager = new LicenseManager(context);
+    licenseManager.init();
+    
+    const outputChannel = vscode.window.createOutputChannel("Accessibility Guardian Report");
+    const diagnosticCollection = vscode.languages.createDiagnosticCollection('accessibility-guardian');
     context.subscriptions.push(diagnosticCollection);
 
-    // --- REGISTER QUICK FIX ---
-    context.subscriptions.push(
-        vscode.languages.registerCodeActionsProvider(
-            { language: 'html', scheme: 'file' },
-            new QuickFixProvider(),
-            { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }
-        )
-    );
+    // 2. Register License Command
+    console.log('✅ Registering: enterLicense');
+    context.subscriptions.push(vscode.commands.registerCommand('accessibilityGuardian.enterLicense', () => {
+        licenseManager.promptForLicense();
+    }));
 
-    // --- EVENTS ---
-    if (vscode.window.activeTextEditor) {
-        runScan(vscode.window.activeTextEditor.document);
-    }
-
-    context.subscriptions.push(
-        vscode.window.onDidChangeActiveTextEditor(editor => {
-            if (editor) runScan(editor.document);
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeTextDocument(event => {
-            if (vscode.window.activeTextEditor && event.document === vscode.window.activeTextEditor.document) {
-                runScan(event.document);
-            }
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('accessibilityGuardian')) {
-                if (vscode.window.activeTextEditor) {
-                    runScan(vscode.window.activeTextEditor.document);
-                }
-            }
-        })
-    );
-}
-
-function runScan(document: vscode.TextDocument) {
-    diagnosticCollection.delete(document.uri);
-
-    if (document.languageId !== 'html') return;
-
-    const config = vscode.workspace.getConfiguration('accessibilityGuardian');
-    const enableHipaa = config.get<boolean>('enableHipaa');
-    const enableWcag = config.get<boolean>('enableWcag');
-    const enableGdpr = config.get<boolean>('enableGdpr');
-
-    const text = document.getText();
-    const allFindings: Finding[] = [];
-
-    if (enableHipaa) allFindings.push(...scanHtmlHipaa(text));
-    if (enableWcag) allFindings.push(...scanWcag(text));
-    if (enableGdpr) allFindings.push(...scanGdpr(text));
-
-    const diagnostics = allFindings.map(finding => {
-        const startPos = document.positionAt(finding.start);
-        const endPos = document.positionAt(finding.end);
+    // 3. Register Active Scan
+    console.log('✅ Registering: scanActiveFile');
+    context.subscriptions.push(vscode.commands.registerCommand('accessibilityGuardian.scanActiveFile', async () => {
+        if (!licenseManager.isLicensed()) {
+            vscode.window.showWarningMessage('Trial Expired: Enterprise License required.');
+            return;
+        }
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showInformationMessage('No active file to scan.');
+            return;
+        }
+        const ruleManager = new RuleManager();
+        const activeRules = await ruleManager.getActiveRules();
         
-        const diagnostic = new vscode.Diagnostic(
-            new vscode.Range(startPos, endPos),
-            finding.message,
-            mapSeverity(finding.severity)
-        );
-        diagnostic.code = finding.code;
-        diagnostic.source = 'Accessibility Guardian';
-        return diagnostic;
+        vscode.window.setStatusBarMessage('Scanning...', 2000);
+        const scanner = new Scanner();
+        const diagnostics = scanner.scan(editor.document, activeRules);
+
+        diagnosticCollection.set(editor.document.uri, diagnostics);
+
+        if (diagnostics.length > 0) {
+            vscode.window.showErrorMessage(`Found ${diagnostics.length} compliance issues.`);
+        } else {
+            vscode.window.showInformationMessage('✅ No issues found!');
+        }
+    }));
+
+    // 4. Register Deep Scan Workspace (With Progress Bar)
+    console.log('✅ Registering: scanWorkspace');
+    let deepScanCommand = vscode.commands.registerCommand('accessibilityGuardian.scanWorkspace', async () => {
+        
+        if (!licenseManager.isLicensed()) {
+            vscode.window.showWarningMessage('Trial Expired: Enterprise Deep Scan requires a valid license.');
+            return;
+        }
+
+        const ruleManager = new RuleManager();
+        const activeRules = await ruleManager.getActiveRules();
+        const scanner = new Scanner();
+        const extractor = new ContentExtractor();
+
+        // Find files
+        const files = await vscode.workspace.findFiles('**/*.{pdf,docx,html,txt,md}', '**/node_modules/**');
+        
+        outputChannel.clear();
+        outputChannel.show();
+        outputChannel.appendLine(`🚀 Starting Enterprise Deep Scan on ${files.length} files...`);
+
+        // SHOW PROGRESS BAR
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: "Accessibility Guardian: Deep Scan",
+            cancellable: true
+        }, async (progress, token) => {
+            
+            let totalIssues = 0;
+            const increment = 100 / files.length;
+
+            for (const file of files) {
+                // Allow user to cancel if it takes too long
+                if (token.isCancellationRequested) {
+                    outputChannel.appendLine("🛑 Scan Cancelled by user.");
+                    break;
+                }
+
+                const fileName = vscode.workspace.asRelativePath(file);
+                progress.report({ message: `Scanning ${fileName}...`, increment: increment });
+                outputChannel.appendLine(`Scanning: ${fileName}...`);
+                
+                // Extract & Scan
+                try {
+                    const textContent = await extractor.extractText(file);
+                    const fakeDoc = {
+                        getText: () => textContent,
+                        positionAt: (offset: number) => new vscode.Position(0, 0)
+                    } as vscode.TextDocument;
+
+                    const issues = scanner.scan(fakeDoc, activeRules);
+
+                    if (issues.length > 0) {
+                        totalIssues += issues.length;
+                        outputChannel.appendLine(`   ❌ Found ${issues.length} issues.`);
+                    } else {
+                        outputChannel.appendLine(`   ✅ Clean`);
+                    }
+                } catch (err) {
+                    outputChannel.appendLine(`   ⚠️ Error reading file: ${err}`);
+                }
+                
+                // tiny pause to let the UI breathe
+                await new Promise(r => setTimeout(r, 10)); 
+            }
+
+            outputChannel.appendLine(`\n🏁 Scan Complete. Total Issues: ${totalIssues}`);
+            vscode.window.showInformationMessage(`Deep Scan Complete: Found ${totalIssues} issues.`);
+        });
     });
-
-    diagnosticCollection.set(document.uri, diagnostics);
-}
-
-function mapSeverity(severity: string): vscode.DiagnosticSeverity {
-    switch (severity) {
-        case 'error': return vscode.DiagnosticSeverity.Error;
-        case 'warn': return vscode.DiagnosticSeverity.Warning;
-        case 'info': return vscode.DiagnosticSeverity.Information;
-        default: return vscode.DiagnosticSeverity.Information;
-    }
+    context.subscriptions.push(deepScanCommand);
+    
+    console.log('🚀 Accessibility Guardian: ACTIVATION COMPLETE.');
 }
 
 export function deactivate() {}
