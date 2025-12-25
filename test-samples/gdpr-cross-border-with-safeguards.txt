@@ -1,0 +1,2 @@
+We use googleapis.com for maps and analytics.
+Our transfers rely on Standard Contractual Clauses (SCC) and a Data Processing Agreement (DPA).

@@ -2,7 +2,7 @@
   "name": "accessibility-guardian",
   "displayName": "Accessibility Guardian",
   "description": "Local-first compliance scanning (HIPAA, ADA, GDPR) for VS Code.",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "publisher": "EchoCoreLabs",
   "repository": {
     "type": "git",
@@ -43,6 +43,97 @@
           "type": "boolean",
           "default": true,
           "description": "Enable scanning for Protected Health Information (PHI) and HIPAA risks."
+        },
+        "accessibilityGuardian.privacy.crossBorder.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable scanning for GDPR cross-border data transfer risks."
+        },
+        "accessibilityGuardian.privacy.crossBorder.highRiskVendors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "google",
+            "google-analytics",
+            "facebook",
+            "meta",
+            "aws",
+            "amazonaws",
+            "azure",
+            "cloudfront",
+            "stripe",
+            "paypal"
+          ],
+          "description": "Vendor keywords that trigger EU cross-border transfer warnings."
+        },
+        "accessibilityGuardian.privacy.crossBorder.requireTransferMechanismDisclosure": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require SCCs, adequacy, or other transfer mechanism disclosure for cross-border risks."
+        },
+        "accessibilityGuardian.privacy.crossBorder.requireSCCorAdequacyMention": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require SCCs, adequacy, or similar safeguards to be mentioned in policy text."
+        },
+        "accessibilityGuardian.privacy.crossBorder.requireDPAControllerProcessorLanguage": {
+          "type": "boolean",
+          "default": false,
+          "description": "Require controller/processor and DPA language when cross-border transfers are detected."
+        },
+        "accessibilityGuardian.privacy.crossBorder.severity": {
+          "type": "string",
+          "enum": [
+            "info",
+            "warn",
+            "error"
+          ],
+          "default": "warn",
+          "description": "Default severity for cross-border transfer findings."
+        },
+        "accessibilityGuardian.privacy.highRiskVendors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "google.com",
+            "googleapis.com",
+            "google-analytics.com",
+            "googletagmanager.com",
+            "facebook.com",
+            "connect.facebook.net",
+            "meta.com",
+            "aws.amazon.com",
+            "amazonaws.com",
+            "azure.microsoft.com",
+            "blob.core.windows.net",
+            "herokuapp.com",
+            "mixpanel.com",
+            "segment.io",
+            "stripe.com",
+            "paypal.com"
+          ],
+          "description": "List of vendor domains that trigger cross-border transfer warnings."
+        },
+        "accessibilityGuardian.privacy.complianceKeywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "Standard Contractual Clauses",
+            "SCC",
+            "Adequacy Decision",
+            "Data Privacy Framework",
+            "Binding Corporate Rules",
+            "BCR",
+            "Data Processing Agreement",
+            "DPA"
+          ],
+          "description": "Keywords that indicate the presence of legal safeguards for data transfers."
         }
       }
     }

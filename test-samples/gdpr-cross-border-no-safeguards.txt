@@ -1,0 +1,5 @@
+This document references third-party analytics:
+- https://www.google-analytics.com/collect
+- https://aws.amazon.com/
+
+No transfer safeguards are described here.

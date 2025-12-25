@@ -1,0 +1,5 @@
+{
+  "enableHipaa": true,
+  "enableGdpr": true,
+  "enableAda": true
+}
