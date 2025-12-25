@@ -4,6 +4,10 @@
   "description": "Local-first compliance scanning (HIPAA, ADA, GDPR) for VS Code.",
   "version": "0.2.4",
   "publisher": "EchoCoreLabs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Racer-01111000/accessibility-guardian.git"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
