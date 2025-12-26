@@ -2,6 +2,12 @@
 
 All notable changes to the "Accessibility Guardian" extension will be documented in this file.
 
+## [0.3.2] - 2025-12-26
+### Added
+- **Free Trial**: Added 15-day free trial period.
+- **Licensing**: After 15 days, a license key ($50 lifetime) is required to continue scanning.
+- **Store Link**: Connected "Buy License" button to the live checkout page.
+
 ## [0.3.0] - 2025-12-25
 ### Added
 - **GDPR Cross-Border Module**: New analyzer to detect data transfer risks.

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LicenseManager } from './license';
+import { LicenseManager } from './managers/LicenseManager';
 import { RuleManager } from './ruleManager';
 import { Scanner } from './scanner';
 import { ContentExtractor } from './contentExtractor';
@@ -143,7 +143,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     // 1. Setup Managers
     const licenseManager = new LicenseManager(context);
-    licenseManager.init();
+    const status = licenseManager.getStatus();
+    if (status.active && status.remainingDays <= 3) {
+        vscode.window.showInformationMessage(`Accessibility Guardian Trial: ${status.remainingDays} days remaining.`);
+    }
     
     const outputChannel = vscode.window.createOutputChannel("Accessibility Guardian Report");
     const diagnosticCollection = vscode.languages.createDiagnosticCollection('accessibility-guardian');
@@ -158,10 +161,13 @@ export function activate(context: vscode.ExtensionContext) {
     // 3. Register Active Scan
     console.log('✅ Registering: scanActiveFile');
     context.subscriptions.push(vscode.commands.registerCommand('accessibilityGuardian.scanActiveFile', async () => {
-        if (!licenseManager.isLicensed()) {
-            vscode.window.showWarningMessage('Trial Expired: Enterprise License required.');
+        // --- LICENSE CHECK START ---
+        const currentStatus = licenseManager.getStatus();
+        if (!currentStatus.active) {
+            licenseManager.promptForLicense();
             return;
         }
+        // --- LICENSE CHECK END ---
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             vscode.window.showInformationMessage('No active file to scan.');
@@ -196,11 +202,13 @@ export function activate(context: vscode.ExtensionContext) {
     // 4. Register Deep Scan Workspace (With Progress Bar)
     console.log('✅ Registering: scanWorkspace');
     let deepScanCommand = vscode.commands.registerCommand('accessibilityGuardian.scanWorkspace', async () => {
-        
-        if (!licenseManager.isLicensed()) {
-            vscode.window.showWarningMessage('Trial Expired: Enterprise Deep Scan requires a valid license.');
+        // --- LICENSE CHECK START ---
+        const currentStatus = licenseManager.getStatus();
+        if (!currentStatus.active) {
+            licenseManager.promptForLicense();
             return;
         }
+        // --- LICENSE CHECK END ---
 
         const ruleManager = new RuleManager();
         const activeRules = await ruleManager.getActiveRules();
