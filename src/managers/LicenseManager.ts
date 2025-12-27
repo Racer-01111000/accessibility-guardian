@@ -7,13 +7,21 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 export class LicenseManager {
     private context: vscode.ExtensionContext;
+    private resetTrialOnStartup: boolean;
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor(context: vscode.ExtensionContext, options?: { resetTrialOnStartup?: boolean }) {
         this.context = context;
+        this.resetTrialOnStartup = Boolean(options?.resetTrialOnStartup);
         this.initializeTrial();
     }
 
     private initializeTrial() {
+        if (this.resetTrialOnStartup) {
+            // Dev-only: ensure a fresh trial window for local debugging.
+            this.context.globalState.update(KEY_TRIAL_START, Date.now());
+            return;
+        }
+
         // If no start date exists, set it to NOW.
         if (!this.context.globalState.get(KEY_TRIAL_START)) {
             this.context.globalState.update(KEY_TRIAL_START, Date.now());
