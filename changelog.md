@@ -2,6 +2,10 @@
 
 All notable changes to the "Accessibility Guardian" extension will be documented in this file.
 
+## [0.3.4] - 2025-12-26
+### Added
+- **Verified Release**: Verified release with active 15-day trial and developer config fixes.
+
 ## [0.3.3] - 2025-12-26
 ### Added
 - **Verified Release**: Verified release with active 15-day trial and developer config fixes.
