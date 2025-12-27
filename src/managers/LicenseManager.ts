@@ -71,4 +71,8 @@ export class LicenseManager {
             }
         }
     }
+
+    public async setTrialStart(timestamp: number) {
+        await this.context.globalState.update(KEY_TRIAL_START, timestamp);
+    }
 }

@@ -32,14 +32,20 @@ suite('Accessibility Guardian', () => {
         }
     }).timeout(20000);
 
+    const openSampleDoc = async () => {
+        const samplePath = path.join(__dirname, '..', 'test-fixtures', 'scan-sample.html');
+        const doc = await vscode.workspace.openTextDocument(samplePath);
+        await vscode.window.showTextDocument(doc);
+        return doc;
+    };
+
     test('runs scan commands end-to-end', async () => {
         const extension = getExtension();
         assert.ok(extension, 'Extension not found in development host');
         await extension.activate();
 
-        const samplePath = path.join(__dirname, '..', 'test-fixtures', 'scan-sample.html');
-        const doc = await vscode.workspace.openTextDocument(samplePath);
-        await vscode.window.showTextDocument(doc);
+        await vscode.commands.executeCommand('accessibilityGuardian.__test.setTrialStart', Date.now());
+        const doc = await openSampleDoc();
 
         await vscode.commands.executeCommand('accessibilityGuardian.scanActiveFile');
         await new Promise((resolve) => setTimeout(resolve, 50));
@@ -60,5 +66,54 @@ suite('Accessibility Guardian', () => {
         assert.strictEqual(infoCount, 2, 'Expected 2 info diagnostics');
 
         await vscode.commands.executeCommand('accessibilityGuardian.scanWorkspace');
+    }).timeout(60000);
+
+    test('prompts for license and opens checkout when trial expired', async () => {
+        const extension = getExtension();
+        assert.ok(extension, 'Extension not found in development host');
+        await extension.activate();
+
+        const originalShowWarningMessage = vscode.window.showWarningMessage;
+        const originalOpenExternal = vscode.env.openExternal;
+
+        let capturedArgs = null;
+        let openedUrl = null;
+
+        vscode.window.showWarningMessage = async (...args) => {
+            capturedArgs = args;
+            return 'Buy License ($50)';
+        };
+
+        vscode.env.openExternal = async (uri) => {
+            openedUrl = uri?.toString();
+            return true;
+        };
+
+        try {
+            const expiredAt = Date.now() - (16 * 24 * 60 * 60 * 1000);
+            await vscode.commands.executeCommand('accessibilityGuardian.__test.setTrialStart', expiredAt);
+            await openSampleDoc();
+
+            await vscode.commands.executeCommand('accessibilityGuardian.scanActiveFile');
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            assert.ok(capturedArgs, 'Expected license prompt to be shown');
+            assert.ok(
+                capturedArgs.includes('Buy License ($50)'),
+                'Expected Buy License option in prompt'
+            );
+            assert.ok(
+                capturedArgs.includes('Enter Key'),
+                'Expected Enter Key option in prompt'
+            );
+            assert.ok(
+                openedUrl && openedUrl.includes('lemonsqueezy.com/checkout/buy/'),
+                'Expected checkout URL to open'
+            );
+        } finally {
+            vscode.window.showWarningMessage = originalShowWarningMessage;
+            vscode.env.openExternal = originalOpenExternal;
+            await vscode.commands.executeCommand('accessibilityGuardian.__test.setTrialStart', Date.now());
+        }
     }).timeout(60000);
 });

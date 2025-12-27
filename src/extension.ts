@@ -163,6 +163,11 @@ export function activate(context: vscode.ExtensionContext) {
         context.subscriptions.push(vscode.commands.registerCommand('accessibilityGuardian.enterLicense', () => {
             licenseManager.promptForLicense();
         }));
+        if (context.extensionMode !== vscode.ExtensionMode.Production) {
+            context.subscriptions.push(vscode.commands.registerCommand('accessibilityGuardian.__test.setTrialStart', (timestamp: number) => {
+                return licenseManager.setTrialStart(timestamp);
+            }));
+        }
 
         // 3. Register Active Scan
         console.log('✅ Registering: scanActiveFile');
@@ -222,7 +227,7 @@ export function activate(context: vscode.ExtensionContext) {
             const extractor = new ContentExtractor();
 
             // Find files
-            const files = await vscode.workspace.findFiles('**/*.{pdf,docx,html,txt,md}', '**/node_modules/**');
+        const files = await vscode.workspace.findFiles('**/*.{pdf,docx,html,txt,md,eml}', '**/node_modules/**');
             
             outputChannel.clear();
             outputChannel.show();

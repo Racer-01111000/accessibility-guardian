@@ -23,6 +23,11 @@ export class RuleManager {
     public async getActiveRules(): Promise<GuardianRules> {
         // A. Start with defaults
         let activeRules = { ...this.defaultRules };
+        const config = vscode.workspace.getConfiguration('accessibilityGuardian');
+        const hipaaSetting = config.get<boolean>('enableHipaa');
+        if (hipaaSetting !== undefined) {
+            activeRules.enableHipaa = hipaaSetting;
+        }
 
         // B. Check if a workspace is open
         const workspaceFolders = vscode.workspace.workspaceFolders;
