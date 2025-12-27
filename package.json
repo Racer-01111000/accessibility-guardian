@@ -2,7 +2,7 @@
   "name": "accessibility-guardian",
   "displayName": "Accessibility Guardian",
   "description": "Local-first compliance scanning (HIPAA, ADA, GDPR) for VS Code.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "publisher": "EchoCoreLabs",
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   ],
   "main": "./dist/extension.js",
   "activationEvents": [
+    "onStartupFinished",
     "onCommand:accessibilityGuardian.scanWorkspace",
     "onCommand:accessibilityGuardian.scanActiveFile",
     "onCommand:accessibilityGuardian.enterLicense"
