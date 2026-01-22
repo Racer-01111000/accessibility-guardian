@@ -2,12 +2,6 @@
 
 All notable changes to the "Accessibility Guardian" extension will be documented in this file.
 
-## [0.3.5] - 2026-01-20
-### Added
-- **Liability Shield:** Prevents accidental data leaks by blocking saves/quits when PHI is detected.
-- **Context-Aware Scanning:** Scanner now recognizes medical terminology (e.g., "Diagnosis", "COPD") and context-specific names.
-- **Smart Filters:** Visual warnings appear instantly, but popup warnings only interrupt on Manual Save/Quit.
-
 ## [0.3.4] - 2025-12-26
 ### Added
 - **Verified Release**: Verified release with active 15-day trial and developer config fixes.

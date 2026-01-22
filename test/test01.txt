@@ -1,0 +1,7 @@
+﻿Medical Records Einstein Hospital Philadelphiha Pa.
+
+Patient: Richard Wright
+
+SSN: 555-34-7878
+
+Diagnosis: Heart valve obstruction

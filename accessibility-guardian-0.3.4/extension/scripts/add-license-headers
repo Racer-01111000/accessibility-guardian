@@ -1,0 +1,13 @@
+#!/bin/bash
+# Add license headers to all .ts files if missing.
+
+HEADER="// Accessibility Guardian — Proprietary Evaluation License (30 Days)\n// LicenseRef-EVALUATION\n// © 2025 Richard Robert Wright — All rights reserved.\n"
+
+for f in $(find src -type f -name "*.ts"); do
+    if ! grep -q "LicenseRef-EVALUATION" "$f"; then
+        echo -e "$HEADER$(cat "$f")" > "$f"
+        echo "Added header: $f"
+    else
+        echo "Header already exists: $f"
+    fi
+done

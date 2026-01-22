@@ -1,0 +1,11 @@
+{
+  "files": "test/**/*.test.js",
+  "extensionDevelopmentPath": "/home/richard/accessibility-guardian",
+  "workspaceFolder": "/home/richard/accessibility-guardian/test-fixtures",
+  "launchArgs": [
+    "--disable-extensions",
+    "--disable-workspace-trust",
+    "--skip-welcome",
+    "--skip-release-notes"
+  ]
+}
