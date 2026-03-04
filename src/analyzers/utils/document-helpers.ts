@@ -3,7 +3,7 @@
 // © 2025 Richard Robert Wright — All rights reserved.
 export const PHI_PATTERNS: { type: string; re: RegExp }[] = [
   { type: 'SSN', re: /\b\d{3}-\d{2}-\d{4}\b/g },
-  { type: 'DOB', re: /(?:\b(?:dob|date\s*of\s*birth)\b|"dob")\s*[:\-]?\s*"?(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\b"?/gi },
+  { type: 'DOB', re: /(?:(?:\b(?:dob|date\s*of\s*birth)\b|"dob")\s*[:\-]?\s*"?)?(\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b)"?/gi },
   { type: 'MRN', re: /\b(?:mrn|medical\s*record\s*number)\s*[:\-]?\s*[\w-]{4,}\b/gi },
   { type: 'Email', re: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi },
   { type: 'Phone', re: /\b(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b/g },
