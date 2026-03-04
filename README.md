@@ -1,20 +1,60 @@
-## Accessibility Guardian (VS Code Extension)
+# Accessibility Guardian
 
-Local-first compliance scanning for HIPAA, GDPR, and ADA/WCAG in VS Code.
+Developer-first accessibility and compliance scanning for VS Code.
 
-### Features
-- HIPAA analyzers for PHI patterns in HTML, PDF, DOCX, and email.
-- GDPR checks for EU personal data indicators and cross-border transfer risks.
-- ADA/WCAG checks for common accessibility issues in HTML.
-- Deep scan workspace with progress reporting.
+Accessibility Guardian helps developers detect accessibility and compliance issues directly inside the editor while writing code.
 
-### Commands
+Instead of waiting for audits or external scanners, teams can catch problems earlier in the development workflow.
+
+## What It Does
+
+Accessibility Guardian analyzes project files for common accessibility and compliance risks, including WCAG/ADA-related patterns and optional privacy/compliance checks.
+
+## Key Features
+
+- Real-time accessibility diagnostics
+- Local-first scanning workflow
+- Workspace deep scan across multiple files
+- VS Code Problems panel integration for fast remediation
+
+## Example Issues Detected
+
+Accessibility Guardian can identify issues such as:
+
+- Images missing `alt` attributes
+- Incorrect ARIA roles or attributes
+- Semantic HTML structure issues
+- Improper heading hierarchy
+- Non-semantic accessibility anti-patterns
+
+## Why It Exists
+
+Accessibility issues are often introduced unintentionally during development. Accessibility Guardian is designed to shift detection left, so teams can fix issues before QA bottlenecks or post-release remediation.
+
+## Installation
+
+Install from the VS Code Marketplace:
+
+<https://marketplace.visualstudio.com/items?itemName=EchoCoreLabs.accessibility-guardian>
+
+Then open Command Palette and run:
+
 - `Accessibility Guardian: Scan Active File`
 - `Accessibility Guardian: Deep Scan Workspace (PDF/DOCX)`
-- `Accessibility Guardian: Enter License Key`
 
-### Configuration
-These live in VS Code settings:
+## Usage
+
+Run scans from Command Palette:
+
+- Scan Active File
+- Deep Scan Workspace
+
+Diagnostics appear directly in the VS Code Problems panel.
+
+## Configuration
+
+Configure via VS Code settings:
+
 - `accessibilityGuardian.enableHipaa`
 - `accessibilityGuardian.privacy.crossBorder.enabled`
 - `accessibilityGuardian.privacy.crossBorder.highRiskVendors`
@@ -27,16 +67,15 @@ These live in VS Code settings:
 
 Workspace overrides (optional): `.accessibility-guardian.json`
 
-### GDPR Cross-Border
-Detects high-risk vendors and flags missing transfer safeguards in policy text.  
-Guide: `docs/gdpr-cross-border.md`
+## Roadmap
 
-### Docs
-- `docs/gdpr-cross-border.md`
+Planned improvements include:
 
-### Development
-```bash
-npm install
-npm run bundle
-# F5 in VS Code -> Extension Development Host
-```
+- Expanded accessibility rule coverage
+- Improved accessibility heuristics
+- Deeper project-level analysis
+- Better diagnostics and quick-fix guidance
+
+## License
+
+MIT License

@@ -1,7 +1,7 @@
 {
   "name": "accessibility-guardian",
   "displayName": "Accessibility Guardian",
-  "description": "Local-first compliance scanning (HIPAA, ADA, GDPR) for VS Code.",
+  "description": "Local-first accessibility and compliance scanning (WCAG, ADA, HIPAA, GDPR) for VS Code.",
   "version": "0.3.5",
   "icon": "icon.jpg",
   "publisher": "EchoCoreLabs",
@@ -159,5 +159,20 @@
     "axios": "^1.7.0",
     "mammoth": "^1.11.0",
     "pdf-parse": "^2.4.5"
-  }
+  },
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "ada",
+    "section-508",
+    "aria",
+    "screen-reader",
+    "compliance",
+    "privacy",
+    "hipaa",
+    "gdpr",
+    "vscode",
+    "lint"
+  ]
 }
