@@ -1,0 +1,5 @@
+2026-03-04 12:00:01 INFO patientId=PX-4421 event=admit
+2026-03-04 12:00:03 WARN SSN=123-45-6789 MRN: MRN-778899
+2026-03-04 12:00:10 INFO DOB: 01/22/1987 Phone: (555) 123-9876
+2026-03-04 12:00:12 INFO Email=robert.white@hospitalmail.com Address: 1200 Elm Street
+2026-03-04 12:00:20 INFO Lab Result: Hemoglobin A1C=7.1%

@@ -6,6 +6,7 @@ import { ContentExtractor } from './contentExtractor';
 import { gdprCrossBorderAnalyzer } from './analyzers/privacy/gdprCrossBorderAnalyzer';
 import { Finding, Severity } from './types';
 import { scanDocumentForPHI } from './scanners/phiScanner'; 
+import { PHI_PATTERNS } from './analyzers/utils/document-helpers';
 
 // =============================================================================
 // HELPER FUNCTIONS
@@ -143,6 +144,41 @@ function findingsToDiagnostics(
     });
 }
 
+function phiTypeToSeverity(type: string): vscode.DiagnosticSeverity {
+    const t = type.toLowerCase();
+    if (t === 'ssn' || t === 'mrn' || t === 'insurance/member id') return vscode.DiagnosticSeverity.Error;
+    if (t === 'dob' || t === 'address' || t === 'diagnosis') return vscode.DiagnosticSeverity.Warning;
+    return vscode.DiagnosticSeverity.Information;
+}
+
+function phiPatternDiagnostics(text: string, document: vscode.TextDocument): vscode.Diagnostic[] {
+    const diagnostics: vscode.Diagnostic[] = [];
+
+    for (const { type, re } of PHI_PATTERNS) {
+        re.lastIndex = 0;
+        let match: RegExpExecArray | null;
+
+        while ((match = re.exec(text)) !== null) {
+            const start = document.positionAt(match.index);
+            const end = document.positionAt(match.index + match[0].length);
+            const diagnostic = new vscode.Diagnostic(
+                new vscode.Range(start, end),
+                `${type} detected: ${match[0]}`,
+                phiTypeToSeverity(type)
+            );
+            diagnostic.source = 'Accessibility Guardian (HIPAA)';
+            diagnostic.code = `hipaa:${type.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
+            diagnostics.push(diagnostic);
+
+            if (match.index === re.lastIndex) {
+                re.lastIndex += 1;
+            }
+        }
+    }
+
+    return diagnostics;
+}
+
 // =============================================================================
 // MAIN ACTIVATE FUNCTION
 // =============================================================================
@@ -184,19 +220,31 @@ export function activate(context: vscode.ExtensionContext) {
         }
         const ruleManager = new RuleManager();
         const activeRules = await ruleManager.getActiveRules();
-        
+        const extractor = new ContentExtractor();
+
         vscode.window.setStatusBarMessage('Scanning...', 2000);
-        const scanner = new Scanner(); 
-        let diagnostics = scanner.scan(editor.document, activeRules);
-        
+        const scanner = new Scanner();
+
+        let text = editor.document.getText();
+        const ext = editor.document.uri.fsPath.toLowerCase();
+        if (ext.endsWith('.pdf') || ext.endsWith('.docx') || ext.endsWith('.eml') || ext.endsWith('.json') || ext.endsWith('.log')) {
+            text = await extractor.extractText(editor.document.uri);
+        }
+
+        const workingDoc = createTextDocumentFromText(text);
+        let diagnostics = scanner.scan(workingDoc, activeRules);
+
+        if (activeRules.enableHipaa) {
+            diagnostics.push(...phiPatternDiagnostics(text, workingDoc));
+        }
+
         if (activeRules.enableGdpr) {
-            const text = editor.document.getText();
             const findings = gdprCrossBorderAnalyzer({
                 htmlText: text,
                 urls: extractUrls(text),
                 policyText: text
             });
-            diagnostics.push(...findingsToDiagnostics(findings, editor.document));
+            diagnostics.push(...findingsToDiagnostics(findings, workingDoc));
         }
         diagnostics = dedupeDiagnostics(diagnostics);
 
@@ -219,7 +267,7 @@ export function activate(context: vscode.ExtensionContext) {
         const scanner = new Scanner();
         const extractor = new ContentExtractor();
 
-        const files = await vscode.workspace.findFiles('**/*.{pdf,docx,html,txt,md,eml}', '**/node_modules/**');
+        const files = await vscode.workspace.findFiles('**/*.{pdf,docx,html,txt,md,eml,log,json}', '**/node_modules/**');
         
         outputChannel.clear();
         outputChannel.show();
@@ -249,6 +297,11 @@ export function activate(context: vscode.ExtensionContext) {
                     const fakeDoc = createTextDocumentFromText(textContent);
 
                     let issues = scanner.scan(fakeDoc, activeRules);
+
+                    if (activeRules.enableHipaa) {
+                        issues.push(...phiPatternDiagnostics(textContent, fakeDoc));
+                    }
+
                     if (activeRules.enableGdpr) {
                         const findings = gdprCrossBorderAnalyzer({
                             htmlText: textContent,
@@ -258,6 +311,7 @@ export function activate(context: vscode.ExtensionContext) {
                         issues.push(...findingsToDiagnostics(findings, fakeDoc));
                     }
                     issues = dedupeDiagnostics(issues);
+                    diagnosticCollection.set(file, issues);
 
                     if (issues.length > 0) {
                         totalIssues += issues.length;

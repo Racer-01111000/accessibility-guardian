@@ -1,0 +1,17 @@
+{
+  "patient": {
+    "name": "Robert White",
+    "dob": "01/22/1987",
+    "ssn": "123-45-6789",
+    "mrn": "MRN-778899",
+    "contact": {
+      "email": "robert.white@hospitalmail.com",
+      "phone": "(555) 123-9876",
+      "address": "1200 Elm Street"
+    }
+  },
+  "results": {
+    "hemoglobinA1c": "7.1%",
+    "diagnosis": "Diabetes"
+  }
+}
