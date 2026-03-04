@@ -14,8 +14,14 @@ Accessibility Guardian analyzes project files for common accessibility and compl
 
 - Real-time accessibility diagnostics
 - Local-first scanning workflow
-- Workspace deep scan across multiple files
+- Workspace deep scan across multiple file formats
 - VS Code Problems panel integration for fast remediation
+- Content extraction for binary and structured formats before rule evaluation:
+  - PDF
+  - DOCX
+  - EML
+  - JSON
+  - LOG/TXT
 
 ## Example Issues Detected
 
@@ -26,6 +32,14 @@ Accessibility Guardian can identify issues such as:
 - Semantic HTML structure issues
 - Improper heading hierarchy
 - Non-semantic accessibility anti-patterns
+- HIPAA/PHI indicators in documents and messages:
+  - SSN
+  - MRN
+  - DOB
+  - Email
+  - Phone
+  - Address
+  - Medical test result patterns
 
 ## Why It Exists
 
@@ -40,7 +54,7 @@ Install from the VS Code Marketplace:
 Then open Command Palette and run:
 
 - `Accessibility Guardian: Scan Active File`
-- `Accessibility Guardian: Deep Scan Workspace (PDF/DOCX)`
+- `Accessibility Guardian: Deep Scan Workspace (PDF/DOCX/EML/LOG/JSON)`
 
 ## Usage
 

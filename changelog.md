@@ -2,6 +2,29 @@
 
 All notable changes to the "Accessibility Guardian" extension will be documented in this file.
 
+## [0.3.8] - 2026-03-04
+### Added
+- Multi-format extraction pipeline for HIPAA/PHI scanning:
+  - PDF text extraction hardened for `pdf-parse` module variants
+  - DOCX extraction via `mammoth`
+  - EML extraction via `mailparser` (headers + body + attachment names)
+  - JSON safe parse + flattened value stream normalization
+  - LOG/TXT normalization for scan-friendly pattern detection
+- Deep Scan Workspace now targets `pdf, docx, html, txt, md, eml, log, json`.
+- Added HIPAA sample fixtures for `docx`, `eml`, `log`, and `json` in `test-samples/`.
+
+### Improved
+- Broadened DOB and medical-test-result detection reliability across extracted text.
+- Added screenshot + synthetic-demo-data note in README.
+
+## [0.3.7] - 2026-03-04
+### Added
+- Marketplace screenshot pack and README screenshot section.
+
+## [0.3.6] - 2026-03-04
+### Improved
+- Marketplace metadata, keyword discoverability, and README conversion copy.
+
 ## [0.3.5] - 2026-01-20
 ### Added
 - **Liability Shield:** Prevents accidental data leaks by blocking saves/quits when PHI is detected.
