@@ -51,6 +51,18 @@ Run scans from Command Palette:
 
 Diagnostics appear directly in the VS Code Problems panel.
 
+## Screenshots
+
+![Detect privacy and compliance risks in web content directly inside VS Code.](docs/screenshots/01-active-file-findings.png)
+
+![Scan email-style content for PHI and high-risk identifiers in seconds.](docs/screenshots/02-email-sample-detection.png)
+
+![Detect compliance issues in HTML content with clear in-editor signals.](docs/screenshots/03-html-sample-detection.png)
+
+![Analyze plain-text records and surface sensitive data patterns immediately.](docs/screenshots/04-text-sample-detection.png)
+
+> Note: screenshots use synthetic demo data for illustration.
+
 ## Configuration
 
 Configure via VS Code settings:
