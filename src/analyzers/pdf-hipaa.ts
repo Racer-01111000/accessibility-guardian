@@ -2,9 +2,7 @@
 // LicenseRef-EVALUATION
 // © 2025 Richard Robert Wright — All rights reserved.
 import * as vscode from 'vscode';
-// pdf-parse has no official TS types in many envs; 'any' keeps it simple.
-const pdfParse: any = require('pdf-parse');
-
+import { extractPdfText } from '../contentExtractor';
 import { PHI_PATTERNS, sliceWithContext } from './utils/document-helpers';
 
 export async function scanPdfHipaaCommand() {
@@ -17,10 +15,8 @@ export async function scanPdfHipaaCommand() {
 
   try {
     const uri = pick[0];
-    const buf = Buffer.from(await vscode.workspace.fs.readFile(uri));
-    const result = await (pdfParse as any)(buf); // { text, numpages, ... }
-    const text: string = result.text || '';
-    const numPages: number = result.numpages || 0;
+    const text = await extractPdfText(uri.fsPath);
+    const numPages = (text.match(/\f/g)?.length || 0) + 1;
 
     const findings: {
       type: string;

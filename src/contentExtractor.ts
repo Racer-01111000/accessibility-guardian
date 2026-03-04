@@ -1,5 +1,37 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
+import pdf from 'pdf-parse';
+
+/**
+ * Extracts text from a PDF file.
+ * Supports pdf-parse v1 function API and v2 class API.
+ */
+export async function extractPdfText(filePath: string): Promise<string> {
+    const dataBuffer = fs.readFileSync(filePath);
+
+    // v1: pdf(dataBuffer) -> { text }
+    if (typeof (pdf as unknown as any) === 'function') {
+        const data = await (pdf as unknown as any)(dataBuffer);
+        return data?.text ?? '';
+    }
+
+    // v2: { PDFParse } export
+    const mod: any = pdf as any;
+    if (typeof mod?.PDFParse === 'function') {
+        const parser = new mod.PDFParse({ data: dataBuffer });
+        try {
+            const result = await parser.getText();
+            return result?.text ?? '';
+        } finally {
+            if (typeof parser.destroy === 'function') {
+                await parser.destroy();
+            }
+        }
+    }
+
+    throw new Error('Unsupported pdf-parse module shape');
+}
 
 export class ContentExtractor {
 
@@ -12,33 +44,30 @@ export class ContentExtractor {
         const ext = path.extname(filePath).toLowerCase();
 
         try {
+            let text: string;
+
+            if (ext === '.pdf') {
+                text = await extractPdfText(filePath);
+                return text;
+            }
+
             const fileData = await vscode.workspace.fs.readFile(uri);
             const buffer = Buffer.from(fileData);
 
-            // 1. Handle PDF
-            if (ext === '.pdf') {
-                console.log('📄 Loading PDF Engine...');
-                // LAZY LOAD: Only require pdf-parse when actually needed
-                const pdf = require('pdf-parse'); 
-                const data = await pdf(buffer);
-                return data.text;
-            } 
-            
-            // 2. Handle DOCX
             if (ext === '.docx') {
                 console.log('📝 Loading DOCX Engine...');
-                // LAZY LOAD: Only require mammoth when actually needed
                 const mammoth = require('mammoth');
                 const result = await mammoth.extractRawText({ buffer: buffer });
-                return result.value;
+                text = result.value;
+            } else {
+                text = buffer.toString('utf-8');
             }
 
-            // 3. Default: Handle as plain text
-            return buffer.toString('utf-8');
+            return text;
 
         } catch (error) {
             console.error(`Failed to parse ${filePath}:`, error);
-            return ""; 
+            return '';
         }
     }
 }
