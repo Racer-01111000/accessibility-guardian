@@ -76,6 +76,12 @@ Planned improvements include:
 - Deeper project-level analysis
 - Better diagnostics and quick-fix guidance
 
+## Launch Assets
+
+- Demo script: `docs/DEMO_SCRIPT_5_MIN.md`
+- Screenshot shotlist: `docs/MARKETPLACE_SCREENSHOT_SHOTLIST.md`
+- 30-day install sprint: `docs/LAUNCH_SPRINT_30_DAYS.md`
+
 ## License
 
 MIT License
