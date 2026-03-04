@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import pdf from 'pdf-parse';
 import mammoth from 'mammoth';
 import { simpleParser } from 'mailparser';
+import MsgReader from '@kenjiuno/msgreader';
 
 function stripHtml(input: string): string {
     return input.replace(/<[^>]+>/g, ' ');
@@ -101,6 +102,27 @@ export async function extractEmlText(filePath: string): Promise<string> {
     return normalizeForScan([headers, attachText, bodyText].filter(Boolean).join('\n\n'));
 }
 
+export async function extractMsgText(filePath: string): Promise<string> {
+    const raw = fs.readFileSync(filePath);
+    const reader = new MsgReader(raw);
+    const parsed: any = reader.getFileData();
+
+    const headers = [
+        `Subject: ${parsed.subject || ''}`,
+        `From: ${parsed.senderEmail || parsed.senderName || ''}`,
+        `To: ${(parsed.recipients || []).map((r: any) => r.email || r.name).filter(Boolean).join(', ')}`,
+        `Date: ${parsed.messageDeliveryTime || parsed.clientSubmitTime || ''}`,
+    ].join('\n');
+
+    const bodyText = parsed.body || stripHtml(String(parsed.bodyHTML || parsed.headers || ''));
+    const attachments = (parsed.attachments || [])
+        .map((a: any) => a.fileName || a.fileNameShort)
+        .filter(Boolean) as string[];
+    const attachText = attachments.length ? `Attachments: ${attachments.join(', ')}` : '';
+
+    return normalizeForScan([headers, attachText, bodyText].filter(Boolean).join('\n\n'));
+}
+
 export class ContentExtractor {
 
     /**
@@ -125,8 +147,7 @@ export class ContentExtractor {
             }
 
             if (ext === '.msg') {
-                console.warn(`[AG] .msg parsing not yet implemented: ${filePath}`);
-                return '';
+                return await extractMsgText(filePath);
             }
 
             const fileData = await vscode.workspace.fs.readFile(uri);

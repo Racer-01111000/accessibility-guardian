@@ -227,7 +227,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         let text = editor.document.getText();
         const ext = editor.document.uri.fsPath.toLowerCase();
-        if (ext.endsWith('.pdf') || ext.endsWith('.docx') || ext.endsWith('.eml') || ext.endsWith('.json') || ext.endsWith('.log')) {
+        if (ext.endsWith('.pdf') || ext.endsWith('.docx') || ext.endsWith('.eml') || ext.endsWith('.msg') || ext.endsWith('.json') || ext.endsWith('.log')) {
             text = await extractor.extractText(editor.document.uri);
         }
 
@@ -267,7 +267,7 @@ export function activate(context: vscode.ExtensionContext) {
         const scanner = new Scanner();
         const extractor = new ContentExtractor();
 
-        const files = await vscode.workspace.findFiles('**/*.{pdf,docx,html,txt,md,eml,log,json}', '**/node_modules/**');
+        const files = await vscode.workspace.findFiles('**/*.{pdf,docx,html,txt,md,eml,msg,log,json}', '**/node_modules/**');
         
         outputChannel.clear();
         outputChannel.show();

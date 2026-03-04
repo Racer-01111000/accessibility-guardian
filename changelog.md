@@ -8,6 +8,7 @@ All notable changes to the "Accessibility Guardian" extension will be documented
   - PDF text extraction hardened for `pdf-parse` module variants
   - DOCX extraction via `mammoth`
   - EML extraction via `mailparser` (headers + body + attachment names)
+  - MSG extraction via `@kenjiuno/msgreader` (headers + recipients + attachment names)
   - JSON safe parse + flattened value stream normalization
   - LOG/TXT normalization for scan-friendly pattern detection
 - Deep Scan Workspace now targets `pdf, docx, html, txt, md, eml, log, json`.
